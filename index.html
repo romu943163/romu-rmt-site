@@ -1,34 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ROMU-RMT – 商品一覧</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="module" src="firebase-init.js"></script>
-</head>
-<body>
-  <h1>商品一覧</h1>
-  <div id="item-list">読み込み中…</div>
-
+  <link rel="stylesheet" href="style.css" />
   <script type="module">
-    import { db, collection, getDocs } from "./firebase-init.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "あなたのAPIキー",
+      authDomain: "xxxxx.firebaseapp.com",
+      projectId: "xxxxx",
+      storageBucket: "xxxxx.appspot.com",
+      messagingSenderId: "xxxxx",
+      appId: "xxxxx"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
     const itemList = document.getElementById("item-list");
     const querySnapshot = await getDocs(collection(db, "items"));
 
-    itemList.innerHTML = ""; // 一旦消す
+    itemList.innerHTML = ""; // 初期化
 
     querySnapshot.forEach((doc) => {
       const item = doc.data();
       itemList.innerHTML += `
         <div class="item">
           <h3>${item.title}</h3>
-          <img src="${item.image}" alt="商品画像" width="150"><br>
+          <img src="${item.image}" alt="商品画像" width="150" />
           <strong>${item.price}円</strong>
           <p>${item.description}</p>
         </div>
       `;
     });
   </script>
+</head>
+<body>
+  <h1>商品一覧</h1>
+  <div id="item-list">読み込み中...</div>
 </body>
 </html>
