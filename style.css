@@ -1,13 +1,7 @@
-
-body {
-    background-color: #faf5eb;
-    font-family: sans-serif;
-    padding: 20px;
-}
-.item {
-    border: 1px solid #ccc;
-    background: white;
-    margin-bottom: 15px;
-    padding: 10px;
-    border-radius: 8px;
+.notification-card {
+  background: #fff;
+  border-left: 4px solid #f39c12;
+  padding: 10px;
+  margin: 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
