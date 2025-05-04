@@ -5,32 +5,36 @@
   <title>ROMU-RMT – 商品一覧</title>
   <link rel="stylesheet" href="style.css" />
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    // Firebase設定と初期化（ここに入れる！）
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-analytics.js";
+    import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
     const firebaseConfig = {
-      apiKey: "あなたのAPIキー",
-      authDomain: "xxxxx.firebaseapp.com",
-      projectId: "xxxxx",
-      storageBucket: "xxxxx.appspot.com",
-      messagingSenderId: "xxxxx",
-      appId: "xxxxx"
+      apiKey: "AIzaSyAAWG0qtBaZFsuTXoTiz_I4ygHVSUndS4k",
+      authDomain: "romu-rmt.firebaseapp.com",
+      projectId: "romu-rmt",
+      storageBucket: "romu-rmt.appspot.com",
+      messagingSenderId: "792882957292",
+      appId: "1:792882957292:web:9147f9e4ce4111f9aacec9",
+      measurementId: "G-ZHH7PTGM0Q"
     };
 
     const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
     const db = getFirestore(app);
 
+    // Firestoreからデータを取得
     const itemList = document.getElementById("item-list");
     const querySnapshot = await getDocs(collection(db, "items"));
 
-    itemList.innerHTML = ""; // 初期化
-
+    itemList.innerHTML = "";
     querySnapshot.forEach((doc) => {
       const item = doc.data();
       itemList.innerHTML += `
         <div class="item">
           <h3>${item.title}</h3>
-          <img src="${item.image}" alt="商品画像" width="150" />
+          <img src="${item.image}" alt="${item.title}" />
           <strong>${item.price}円</strong>
           <p>${item.description}</p>
         </div>
