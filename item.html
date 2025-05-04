@@ -1,19 +1,49 @@
-<html><head><title>item.html</title>
-<!-- Firebase SDKの読み込み -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAAWG0qtBaZFsuTXoTiz_I4ygHVSUndS4k",
-    authDomain: "romu-rmt.firebaseapp.com",
-    projectId: "romu-rmt",
-    storageBucket: "romu-rmt.appspot.com",
-    messagingSenderId: "792882957292",
-    appId: "1:792882957292:web:9147f9e4ce4111f9aacec9",
-    measurementId: "G-ZHH7PTGM0Q"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
-</head><body>item.html コンテンツ</body></html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>商品詳細</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1 id="title">タイトル</h1>
+    <img id="image" src="" alt="商品画像" style="max-width:100%;">
+    <p id="description"></p>
+    <p><strong>価格:</strong> ¥<span id="price"></span></p>
+    <button id="buyBtn">購入する</button>
+  </div>
+
+  <script type="module">
+    import { db, auth } from './firebase-config.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+
+    const docRef = doc(db, 'items', id);
+    getDoc(docRef).then(docSnap => {
+      if (docSnap.exists()) {
+        const data = docSnap.data();
+        document.getElementById('title').textContent = data.title;
+        document.getElementById('description').textContent = data.description;
+        document.getElementById('price').textContent = data.price;
+        document.getElementById('image').src = data.image;
+      }
+    });
+
+    document.getElementById("buyBtn").addEventListener("click", () => {
+      auth.onAuthStateChanged(user => {
+        if (user) {
+          location.href = `chat.html?id=${id}&buyer=${user.uid}`;
+        } else {
+          alert("ログインしてください");
+          location.href = "login.html";
+        }
+      });
+    });
+  </script>
+</body>
+</html>

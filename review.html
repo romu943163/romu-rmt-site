@@ -1,19 +1,56 @@
-<html><head><title>review.html</title>
-<!-- Firebase SDKの読み込み -->
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyAAWG0qtBaZFsuTXoTiz_I4ygHVSUndS4k",
-    authDomain: "romu-rmt.firebaseapp.com",
-    projectId: "romu-rmt",
-    storageBucket: "romu-rmt.appspot.com",
-    messagingSenderId: "792882957292",
-    appId: "1:792882957292:web:9147f9e4ce4111f9aacec9",
-    measurementId: "G-ZHH7PTGM0Q"
-  };
-  firebase.initializeApp(firebaseConfig);
-</script>
-</head><body>review.html コンテンツ</body></html>
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>レビュー投稿</title>
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="firebase-config.js"></script>
+</head>
+<body>
+  <h2>レビュー投稿</h2>
+  <textarea id="reviewText" rows="4" cols="40" placeholder="レビュー内容"></textarea><br>
+  <button id="submitBtn">投稿</button>
+  <h3>レビュー一覧</h3>
+  <div id="reviewList"></div>
+
+  <script type="module">
+    import { db, auth } from './firebase-config.js';
+    import {
+      collection, addDoc, query, orderBy, onSnapshot
+    } from 'https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js';
+
+    const params = new URLSearchParams(location.search);
+    const itemId = params.get('id');
+    const reviewsRef = collection(db, 'reviews', itemId, 'list');
+
+    auth.onAuthStateChanged(user => {
+      if (!user) location.href = "login.html";
+
+      document.getElementById("submitBtn").onclick = async () => {
+        const content = document.getElementById("reviewText").value;
+        if (content) {
+          await addDoc(reviewsRef, {
+            uid: user.uid,
+            text: content,
+            created: new Date()
+          });
+          document.getElementById("reviewText").value = "";
+        }
+      };
+
+      const q = query(reviewsRef, orderBy("created", "desc"));
+      onSnapshot(q, snapshot => {
+        const area = document.getElementById("reviewList");
+        area.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          const div = document.createElement("div");
+          div.textContent = d.text;
+          area.appendChild(div);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
